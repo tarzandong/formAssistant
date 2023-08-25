@@ -1,0 +1,37 @@
+{
+  "name": "formAssistant",
+  "version": "1.0.0",
+  "description": "when you need to complete the form repeatly",
+  "manifest_version": 3,
+  "author": "Tarzan",
+  "icons": {
+    "16": "./logo30.png",
+    "19": "./logo30.png",
+    "38": "./logo30.png",
+    "48": "./logo30.png",
+    "128": "./logo.png"
+  },
+  "side_panel": {
+    "default_path": "./index.html"
+  },
+  "action":{
+    "default_icon": {              
+      "16": "./logo30.png",   
+      "24": "./logo30.png",  
+      "32": "./logo30.png"
+    },
+    "default_title": "测试表单数据"
+  },
+  "content_scripts": [
+    {
+      "js": ["./content.js"],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "permissions": ["activeTab", "scripting", "storage", "sidePanel", "tabs"],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
