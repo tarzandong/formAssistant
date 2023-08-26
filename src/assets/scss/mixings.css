@@ -47,6 +47,18 @@
   border-color: #666666;
 }
 
+.bcgray {
+  background-color: #dfdfdf;
+}
+
+.tcgray {
+  color: #dfdfdf;
+}
+
+.bdcgray {
+  border-color: #dfdfdf;
+}
+
 .bcgreen {
   background-color: #00ff00;
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // import HelloWorld from './components/HelloWorld.vue'
   import {ref, watch, computed} from 'vue'
-  import {NInput, NButton, NTag, NPopconfirm, NSelect, NInputNumber, NRadioGroup, NRadio, NSpace, NUpload} from 'naive-ui'
+  import {NInput, NButton, NTag, NPopconfirm, NSelect, NInputNumber, NRadioGroup, NRadio, NSpace, NUpload, NPopover} from 'naive-ui'
   import type { UploadFileInfo } from 'naive-ui';
 
   
@@ -105,7 +105,8 @@
   const typeOptions = [
     {label: 'String', value: 0},
     {label: 'Number', value: 1},
-    {label: 'Bool', value: 2}
+    {label: 'Bool', value: 2},
+    {label: 'Object', value: 3}
   ]
   type formType = {
     name: string,
@@ -142,7 +143,7 @@
       tempForm.body = {}
     }
     formItems.value.forEach(item => {
-      if (item.key)
+      if (item.key && item.type < 3)
         tempForm.body[item.key] = item.value
     })
     if (stage.value == 4) stageBody.value.formList.push(tempForm)
@@ -168,8 +169,8 @@
     })
   }
   function getType(v: any) {
-    console.log(typeof(v))
-    return typeof(v) == 'number' ? 1: typeof(v) == 'string'? 0 : 2
+    // console.log(typeof(v))
+    return typeof(v) == 'number' ? 1: typeof(v) == 'string'? 0 : typeof(v) == 'boolean' ? 2 : 3
   }
   function editForm(i: number) {
     formIndex.value = i
@@ -263,6 +264,21 @@
         </div>
         
         <div class="fs18">表单列表</div>
+        <NPopover trigger="hover">
+          <template #trigger>
+            <div class="fs12 tcgray1 wfull taL">注：若url匹配，点击表单名可发送表单数据至当前页面，您需要自行处理window message</div>
+          </template>
+          <div class="wfull bcgray">
+            <div>示例代码：</div>
+            <div >window.addEventListener("message", receiveMessage, false)</div>
+            <div >function receiveMessage(event){</div>
+            <div class="ml20">console.log(event.data)</div>
+            <div class="ml20">if (event.data.name == 'login')</div>
+            <div class="ml40">formValue.value = event.data.body</div>
+            <div >}</div>
+          </div>
+        </NPopover>
+        
         <div class="flxR aiC wfull mt20 bb1" v-for="(item, index) in stageBody.formList" :key="item.name">
           <div class="csp fs16 fwb w120 taC" @click="sendForm(item)" >{{ item.name }}</div>
           <img src="./assets/edit.png" class="csp w16 h16 ml20" title="编辑表单" @click="editForm(index)" />
@@ -293,13 +309,14 @@
           </div>
           <div class="w150">
             <NInput v-if="item.type ==0" class="ml10"  placeholder="填入value" v-model:value="item.value" />
-            <NInputNumber v-if="item.type == 1" class="ml10" :show-button="false" placeholder="填入数字"  v-model:value="item.value" :default-value="0" />
-            <NRadioGroup v-if="item.type == 2" v-model:value="item.value" class="ml10" :default-value="true">
+            <NInputNumber v-else-if="item.type == 1" class="ml10" :show-button="false" placeholder="填入数字"  v-model:value="item.value" :default-value="0" />
+            <NRadioGroup v-else-if="item.type == 2" v-model:value="item.value" class="ml10" :default-value="true">
               <NSpace>
                 <NRadio :value="true">true</NRadio>
                 <NRadio :value="false">false</NRadio>
               </NSpace>
             </NRadioGroup>
+            <div v-else class="ml10">暂不支持</div>
           </div>
           
           
