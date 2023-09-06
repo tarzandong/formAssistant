@@ -185,7 +185,23 @@
     })
     stage.value = 5
   }
-
+  const jsonStr = computed(()=>{
+    const tempBody: Record<string, any> = {}
+    formItems.value.forEach(item => {
+      tempBody[item.key] = item.value
+    })
+    try {
+      const file = new Blob([JSON.stringify(tempBody)], {type: 'text/plain'})
+      return window.URL.createObjectURL(file)
+    } catch (error) {
+      const file = new Blob([JSON.stringify({error: 'error item in your form, please check and export again'})], {type: 'text/plain'})
+      return window.URL.createObjectURL(file)
+    }
+    
+  })
+  const filename = computed(()=>{
+    return (formIndex.value == -1? newFormName.value : stageBody.value.formList[formIndex.value].name)+'.json'
+  })
   function importJason(options: { fileList: UploadFileInfo[] }) {
     const reader = new FileReader()
     reader.onload = () => {
@@ -332,6 +348,11 @@
               <img src="./assets/import.png" class="csp w16 h16" title="导入Json"/>
             </NUpload>
           </div>
+          <div class="psr" title="导出Json">
+            <img src="./assets/import.png" class="csp w16 h16" style="transform: rotate(180deg)"/>
+            <a :href="jsonStr" :download="filename" class="csp w16 h16 psa" style="left:0; top: 0; z-index: 1"></a>
+          </div>
+          
         </div>
         <div class="flxR mt20 jcE">
           <NButton @click="stage = 3">取消</NButton>
